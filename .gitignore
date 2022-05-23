@@ -1,0 +1,10 @@
+# vs code
+
+.vs/
+
+# visual studio stuff
+
+*.sln
+*.vcxproj
+*.filters
+*.user
