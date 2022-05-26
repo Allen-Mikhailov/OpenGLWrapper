@@ -1,3 +1,13 @@
-﻿  main.cpp
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-  openglTest.vcxproj -> C:\Users\allenmik\Documents\Code\C++\openglTest\Debug\openglTest.exe
+﻿main.obj : error LNK2019: unresolved external symbol __imp__glfwInit referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__glfwTerminate referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__glfwWindowHint referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__glfwCreateWindow referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__glfwWindowShouldClose referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__glfwSetWindowShouldClose referenced in function "void __cdecl processInput(struct GLFWwindow *)" (?processInput@@YAXPAUGLFWwindow@@@Z)
+main.obj : error LNK2019: unresolved external symbol __imp__glfwSetFramebufferSizeCallback referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__glfwPollEvents referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__glfwGetKey referenced in function "void __cdecl processInput(struct GLFWwindow *)" (?processInput@@YAXPAUGLFWwindow@@@Z)
+main.obj : error LNK2019: unresolved external symbol __imp__glfwMakeContextCurrent referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__glfwSwapBuffers referenced in function _main
+main.obj : error LNK2019: unresolved external symbol __imp__glfwGetProcAddress referenced in function _main
+C:\Users\allenmik\Documents\Code\C++\openglTest\Debug\openglTest.exe : fatal error LNK1120: 12 unresolved externals

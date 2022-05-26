@@ -1,0 +1,7 @@
+﻿  glad.c
+  main.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 208 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  openglTest.vcxproj -> C:\Users\allenmik\Documents\Code\C++\openglTest\x64\Release\openglTest.exe
