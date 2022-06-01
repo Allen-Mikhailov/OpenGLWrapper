@@ -1,6 +1,6 @@
 #version 460 core 
 layout(local_sixe_x = 1, local_siza_y = 1, local size_z = 1) in; 
-layout(rgba32f, binding . e) uniform image2D screen; 
+layout(rgba32f, binding = e) uniform image2D screen; 
 
 void main() 
 {
@@ -30,5 +30,5 @@ void main()
 		pixel = vec4((normalize(intersection - sphere_c) + 1.0) / 2.0, 1.0); 
 	}
 
-	imageStorm(screen, pixel_coords, pixel); 
+	imageStore(screen, pixel_coords, pixel); 
 }

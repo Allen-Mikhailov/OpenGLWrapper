@@ -68,47 +68,89 @@ int main()
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // Creating Texture
-    GLuint screenTex;
-    glCreateTextures(GL_TEXTURE_2D, 1, &screenTex);
-    glTextureParameteri(screenTex, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTextureParameteri(screenTex, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTextureParameteri(screenTex, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTextureParameteri(screenTex, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTextureStorage2D(screenTex, 1, GL_RGBA32F, width, height);
-    glBindImageTexture(0, screenTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+    // Traingle
 
-    GLfloat vertices[] =
-    {
-         -1.0f, -1.0f , 0.0f, 0.0f, 0.0f, 
-         -1.0f, 1.0f , 0.0f, 0.0f, 1.0f, 
-          1.0f, 1.0f , 0.0f, 1.0f, 1.0f, 
-          1.0f, -1.0f , 0.0f, 1.0f, 0.0f
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+         0.0f,  0.5f, 0.0f
     };
 
+    unsigned int VBO;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    GLuint indicies[] =
-    {
-        0, 2, 1,
-        0, 3, 2
-    };
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    // [[Compiling Shaders]]
+    // Vertex shader
+    const char* vertexShaderSource = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\0"; //readFile("shaders/defaultVertex.glsl");
 
-    // Compute Shader
-    char* source = readFile("shaders/computeShader.shader");
-    GLuint computeShader = glCreateShader(GL_COMPUTE_SHADER);
-    glShaderSource(computeShader, 1, &source, NULL);
-    glCompileShader(computeShader);
+    unsigned int vertexShader;
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
-    GLuint computeProgram = glCreateProgram();
-    glAttachShader(computeProgram, computeShader);
-    glLinkProgram(computeProgram);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
 
-    //Using
-    glUseProgram(computeProgram);
-    glDispatchCompute(width, height, 1);
-    glMemoryBarrier(GL_ALL_BARRIER_BITS);
+    // Fragment Shader
+    const char* fragmentShaderSource = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+        "}\0";
+
+    unsigned int fragmentShader;
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    // Shader Program
+    unsigned int shaderProgram;
+    shaderProgram = glCreateProgram();
+
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    // idk if i need this
+    //glUseProgram(shaderProgram);
+
+    // Done
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // 0. copy our vertices array in a buffer for OpenGL to use
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // 1. then set the vertex attributes pointers
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // VAO
+    unsigned int VAO;
+    glGenVertexArrays(1, &VAO);
+
+    // ..:: Initialization code (done once (unless your object frequently changes)) :: ..
+    // 1. bind Vertex Array Object
+    glBindVertexArray(VAO);
+    // 2. copy our vertices array in a buffer for OpenGL to use
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // 3. then set our vertex attributes pointers
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glUseProgram(shaderProgram);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // [[Window Stuff]]
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
