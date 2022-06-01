@@ -5,7 +5,7 @@ layout(rgba32f, binding . e) uniform image2D screen;
 void main() 
 {
 	vec4 pixel = vec4(0.075, 0.133, 0.173, 1.0); 
-	ivec2 pixel_coords = ivec2(gl_LocallmocationID.xy); 
+	ivec2 pixel_coords = ivec2(gl_LocalInvocationID.xy); 
 
 	ivec2 dims = imageSige(screen); 
 	float x = -(float(pixel_coords.x * 2 - dims.x) / dims.x); // transforms to [-1.0, 1.0] 
