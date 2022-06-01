@@ -68,8 +68,32 @@ int main()
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    // Creating Texture
+    GLuint screenTex;
+    glCreateTextures(GL_TEXTURE_2D, 1, &screenTex);
+    glTextureParameteri(screenTex, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTextureParameteri(screenTex, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTextureParameteri(screenTex, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTextureParameteri(screenTex, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTextureStorage2D(screenTex, 1, GL_RGBA32F, width, height);
+    glBindImageTexture(0, screenTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
-    // Compiling Shaders
+    GLfloat vertices[] =
+    {
+         -1.0f, -1.0f , 0.0f, 0.0f, 0.0f, 
+         -1.0f, 1.0f , 0.0f, 0.0f, 1.0f, 
+          1.0f, 1.0f , 0.0f, 1.0f, 1.0f, 
+          1.0f, -1.0f , 0.0f, 1.0f, 0.0f
+    };
+
+
+    GLuint indicies[] =
+    {
+        0, 2, 1,
+        0, 3, 2
+    };
+
+    // [[Compiling Shaders]]
 
     // Compute Shader
     char* source = readFile("shaders/computeShader.shader");
