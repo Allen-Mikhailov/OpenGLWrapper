@@ -1,9 +1,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <windows.h>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <thread>
+#include <chrono>
 #include <memory>
 #include <cstring> 
 
@@ -11,6 +14,8 @@ using namespace std;
 
 int width = 800;
 int height = 600;
+
+int TargetFPS = 60;
 
 void framebuffer_size_callback(GLFWwindow* window, int nwidth, int nheight)
 {
@@ -97,6 +102,8 @@ int main()
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
 
+    
+
     // Fragment Shader
     const char* fragmentShaderSource = readFile("shaders/defaultFragment.glsl");
 
@@ -127,6 +134,8 @@ int main()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
+    
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
@@ -150,6 +159,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
+    double lasttime = glfwGetTime();
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
@@ -164,6 +174,13 @@ int main()
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        if (glfwGetTime() < lasttime + 1.0 / TargetFPS)
+        {
+            Sleep((DWORD)(int)(((lasttime - glfwGetTime() + 1.0 / TargetFPS ))*1000));
+        }
+
+        lasttime = glfwGetTime();
     }
 
     glfwTerminate();
