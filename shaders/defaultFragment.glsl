@@ -18,7 +18,9 @@ float randomnessScale = 0.0;
 
 float resolution = 10;
 float noiseScale = .025;
-int noiseSteps = 5;
+int noiseSteps = 10;
+
+float stepPow = 1.5;
 
 float fallOffScale = 1.5;
 float noisefalloff(float i)
@@ -83,6 +85,7 @@ vec2 getPointPosition(vec2 pointId)
         pointId.y*pointSpreadDistance + alphatorange(random(secondseed))*pointOffsetRandomness
     );
 }
+
 vec3 mod289(vec3 x)
 {
   return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -177,29 +180,43 @@ float cnoise(vec3 P)
   return 2.2 * n_xyz;
 }
 
+float steppingNoise(vec2 vec, float resolution, float slice, float _step, int steps, float stepPow)
+{
+    float n = 0;
+    for (int i = 0; i < steps; i++)
+    {
+        n += cnoise(vec3(vec*resolution * pow(stepPow, i) - _step*i, slice));
+    }
+    return n;
+}
+
+
 void main()
 {
     // Getting Point
     vec2 uvOffset = vec2(0, 0);
+    float n = 0;
+    
+    vec2 _step = vec2(1.3, 1.7);
     for (int i = 0; i < noiseSteps; i++)
     {
         uvOffset += vec2(
-            cnoise(vec3(uv.x*resolution, uv.y*resolution, xSlice+i*xFallOffSizeIncrease)),
-            cnoise(vec3(uv.x*resolution, uv.y*resolution, ySlice+i*yFallOffSizeIncrease))
+            cnoise(vec3(uv*resolution * pow(stepPow, i) - _step*i, xSlice)),
+            cnoise(vec3(uv*resolution * pow(stepPow, i) - _step*i, ySlice))
             )*noiseScale*noisefalloff(i);
     }
 
     uvOffset += vec2(random(uv), random(alterSeed(uv)))*randomnessScale;
 
-    vec2 nuv = uv+uvOffset;
+    vec2 nuv = uv;//+uvOffset;
     vec2 aproxCenterPoint = getAproxPoint(nuv);
 
-    float color = 0;
     vec2 surroundingPoints[9] = surroundingPoints(aproxCenterPoint);
     int closest = 0;
     float smallestdistance = distance(nuv, getPointPosition(surroundingPoints[0]));
     for (int i = 1; i < 9; i++)
     {
+        float _distance = distance(nuv, getPointPosition(surroundingPoints[i])) + steppingNoise(uv, 10, i*10, 2)
         if (distance(nuv, getPointPosition(surroundingPoints[i])) < smallestdistance)
         {
             closest = i;

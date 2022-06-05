@@ -12,8 +12,8 @@
 
 using namespace std;
 
-int width = 800;
-int height = 600;
+int width  = 700;
+int height = 700;
 
 int TargetFPS = 60;
 
